@@ -1,0 +1,1 @@
+export default function handler(req,res){res.setHeader('Cache-Control','no-store');const url=process.env.SUPABASE_URL||'';const key=process.env.SUPABASE_ANON_KEY||'';res.status(200).json({authEnabled:Boolean(url&&key),supabaseUrl:url,supabaseAnonKey:key,billingEnabled:false});}
