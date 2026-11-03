@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Admin · RIMVISUALS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:dark;--bg:#080711;--panel:#151025;--edge:#44335f;--muted:#b8aacb;--purple:#9b66fa}*{box-sizing:border-box}
+body{background:radial-gradient(circle at 55% -15%,#35204e,#080711 62%);color:#f4efff;font-family:Manrope,system-ui,sans-serif;margin:0;min-height:100vh}
+h1,h2,h3,.logo{font-family:Unbounded,system-ui,sans-serif}h1{font-size:clamp(27px,4vw,44px);margin:5px 0 16px}h2{font-size:18px}a{color:#d7a8ff}p{line-height:1.6}
+.wrap{max-width:1180px;margin:auto;padding:24px 20px 80px}header{display:flex;align-items:center;justify-content:space-between;gap:15px;padding:16px 0 35px;border-bottom:1px solid #3f3055}
+header a{font-size:13px;text-decoration:none}header .logo{font-weight:800;color:#e8d3ff}.nav{display:flex;gap:20px}
+.muted{color:var(--muted)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0 26px}
+.card{background:#141022;border:1px solid var(--edge);border-radius:20px;padding:22px}
+.kpi{font:800 32px Unbounded,system-ui,sans-serif;margin-top:12px;color:#d8b9ff}.label{font-size:13px;color:var(--muted)}
+.toolbar{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:17px}
+input,select,textarea{background:#0c0917;border:1px solid #624c7c;border-radius:11px;color:white;font:inherit;padding:12px;min-width:0}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:2px solid #bd9aff;outline-offset:2px}
+#search{width:min(100%,400px)}.btn{border:0;background:#8b5cf6;color:#fff;border-radius:11px;padding:12px 16px;font:700 13px Manrope,system-ui,sans-serif;cursor:pointer}
+.btn.secondary{background:#312542}.btn.danger{background:#762f4a}.btn:disabled{opacity:.5;cursor:not-allowed}
+.table-scroll{overflow-x:auto}table{width:100%;border-collapse:collapse;min-width:720px;text-align:left}th,td{padding:15px 13px;border-bottom:1px solid #34273f;vertical-align:middle;font-size:13px}
+th{color:#c0acd6;font-weight:700}td button{margin-right:8px}.identity{font-weight:700}.pill{border-radius:50px;background:#34204d;color:#e3bcff;font-size:11px;padding:5px 9px;white-space:nowrap}
+section{margin-top:25px}.hidden{display:none!important}#notice{min-height:24px;color:#e0bbff}.modal{position:fixed;inset:0;background:#050208d9;display:flex;align-items:center;justify-content:center;padding:20px;z-index:10}
+.modal .card{width:min(100%,500px);max-height:90vh;overflow-y:auto}.modal label{display:block;margin:16px 0 8px;font-weight:600}.modal input,.modal select,.modal textarea{width:100%}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px;flex-wrap:wrap}
+.log-list{display:grid;gap:10px}.log{display:flex;gap:12px;align-items:center;justify-content:space-between;border-bottom:1px solid #34273f;padding:12px 0;font-size:13px}
+@media(max-width:700px){.grid{grid-template-columns:1fr}.card{padding:16px}.nav{gap:12px}header{flex-wrap:wrap}.log{align-items:flex-start;flex-direction:column}}
+</style></head><body><div class="wrap">
+<header><a class="logo" href="index.html">✦ RIMVISUALS</a><nav class="nav"><a href="account.html">My Account</a><a href="index.html">Website</a></nav></header>
+<main><p class="muted">PRIVATE CONTROL CENTER</p><h1>Admin Panel</h1>
+<p id="notice" role="status">Checking administrator permission…</p>
+<div id="unauthorized" class="card hidden"><h2>Administrator access required</h2><p class="muted">Only explicitly authorized RIMVISUALS administrator accounts can view this page. Please sign in with your administrator account.</p><a href="account.html">Go to My Account</a></div>
+<div id="workspace" class="hidden">
+<div class="grid"><div class="card"><div class="label">Registered profiles</div><div class="kpi" id="total">—</div></div>
+<div class="card"><div class="label">Active complimentary access</div><div class="kpi" id="active">—</div></div>
+<div class="card"><div class="label">Subscriptions recorded</div><div class="kpi" id="paid">—</div></div></div>
+<section class="card"><div class="toolbar"><h2>Members</h2><div class="toolbar"><input id="search" type="search" placeholder="Search by email or Minecraft nickname" aria-label="Search members"><button class="btn secondary" id="reload">Refresh</button></div></div>
+<div class="table-scroll"><table><thead><tr><th>Email</th><th>Minecraft nickname</th><th>Joined</th><th>Access</th><th>Actions</th></tr></thead><tbody id="members"><tr><td colspan="5">Loading profiles…</td></tr></tbody></table></div>
+<p class="muted">Complimentary access is granted manually for testing or authorized giveaways. It is not a payment or confirmed Minecraft client license.</p></section>
+<section class="card"><h2>Activity history</h2><div id="history" class="log-list"><p class="muted">No recorded changes.</p></div></section>
+</div></main></div>
+<div class="modal hidden" id="dialog" role="dialog" aria-modal="true" aria-labelledby="dialogTitle">
+<form class="card" id="grantForm"><h2 id="dialogTitle">Complimentary access</h2><p class="muted" id="targetInfo"></p>
+<label for="grantPlan">Access period</label><select id="grantPlan" required><option value="monthly">30 days</option><option value="quarterly">90 days</option><option value="lifetime">No expiry (manual)</option></select>
+<label for="grantNote">Internal note</label><textarea id="grantNote" rows="3" maxlength="500" placeholder="Testing / giveaway / internal reason"></textarea>
+<div class="modal-actions"><button type="button" class="btn secondary" id="cancel">Cancel</button><button type="submit" class="btn" id="saveGrant">Save access</button></div></form></div>
+<script type="module">
+import {createClient} from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+const $=id=>document.getElementById(id),tell=s=>{$('notice').textContent=s};
+let db,user,profiles=[],grants=[],subscriptions=[],selectedUser=null,adminVerified=false;
+function row(textValue){const el=document.createElement('td');el.textContent=textValue??'—';return el;}
+function date(v){return v?new Date(v).toLocaleDateString():'—';}
+function currentGrant(g){return Boolean(g&&(!g.expires_at||new Date(g.expires_at)>new Date()));}
+function statusFor(profile){const grant=grants.find(g=>g.user_id===profile.id);if(grant&&currentGrant(grant))return 'Complimentary · '+grant.plan+(grant.expires_at?' until '+date(grant.expires_at):'');
+const payment=subscriptions.find(s=>s.user_id===profile.id&&['active','trialing'].includes(s.status)&&(!s.current_period_end||new Date(s.current_period_end)>new Date()));
+return payment?'Subscription · '+payment.plan:'No active access';}
+function render(){const q=$('search').value.trim().toLowerCase();const list=profiles.filter(p=>(p.email||'').toLowerCase().includes(q)||(p.minecraft_nickname||'').toLowerCase().includes(q));
+$('members').replaceChildren();for(const p of list){const tr=document.createElement('tr');const email=row(p.email||'Email unavailable');email.classList.add('identity');tr.append(email,row(p.minecraft_nickname||'—'),row(date(p.created_at)),row(statusFor(p)));const actions=document.createElement('td');
+const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Set access';edit.onclick=()=>openGrant(p);actions.append(edit);
+const existing=grants.find(g=>g.user_id===p.id);if(existing){const revoke=document.createElement('button');revoke.className='btn danger';revoke.textContent='Revoke';revoke.onclick=()=>revokeGrant(p);actions.append(revoke)}
+tr.append(actions);$('members').append(tr)}
+if(!list.length){const tr=document.createElement('tr'),cell=document.createElement('td');cell.colSpan=5;cell.textContent='No matching members';tr.append(cell);$('members').append(tr)}
+$('total').textContent=profiles.length;$('active').textContent=grants.filter(currentGrant).length;$('paid').textContent=subscriptions.filter(s=>['active','trialing'].includes(s.status)&&(!s.current_period_end||new Date(s.current_period_end)>new Date())).length;}
+async function load(){if(!adminVerified)return;tell('Loading members…');const [p,g,s,h]=await Promise.all([
+db.from('profiles').select('id,email,minecraft_nickname,created_at').order('created_at',{ascending:false}).limit(500),
+db.from('manual_access').select('user_id,plan,expires_at,note,updated_at'),
+db.from('subscriptions').select('user_id,plan,status,current_period_end,updated_at'),
+db.from('admin_activity').select('action,occurred_at,affected_user_id').order('occurred_at',{ascending:false}).limit(30)
+]);const error=p.error||g.error||s.error||h.error;if(error){tell('Cannot load admin data: '+error.message);return}profiles=p.data||[];grants=g.data||[];subscriptions=s.data||[];render();
+$('history').replaceChildren();for(const event of h.data||[]){const div=document.createElement('div');div.className='log';const who=profiles.find(p=>p.id===event.affected_user_id);
+const left=document.createElement('span');left.textContent=event.action.replaceAll('_',' ')+' · '+(who?.minecraft_nickname||who?.email||'Deleted user');const right=document.createElement('span');right.className='muted';right.textContent=new Date(event.occurred_at).toLocaleString();div.append(left,right);$('history').append(div)}
+if(!(h.data||[]).length){const x=document.createElement('p');x.className='muted';x.textContent='No recorded changes.';$('history').append(x)}tell('Admin data loaded.');}
+function openGrant(p){selectedUser=p;$('targetInfo').textContent=p.minecraft_nickname||p.email||'Member';const g=grants.find(x=>x.user_id===p.id);$('grantPlan').value=g?.plan||'monthly';$('grantNote').value=g?.note||'';$('dialog').classList.remove('hidden');$('grantPlan').focus()}
+function closeGrant(){$('dialog').classList.add('hidden');selectedUser=null}
+async function revokeGrant(p){if(!confirm('Revoke complimentary access for '+(p.minecraft_nickname||p.email||'this member')+'?'))return;const{error}=await db.from('manual_access').delete().eq('user_id',p.id);if(error){tell(error.message);return}await load()}
+$('grantForm').addEventListener('submit',async e=>{e.preventDefault();if(!selectedUser)return;const btn=$('saveGrant');btn.disabled=true;
+const plan=$('grantPlan').value,note=$('grantNote').value.trim(),expiry=plan==='lifetime'?null:new Date(Date.now()+(plan==='monthly'?30:90)*86400000).toISOString();
+const existing=grants.find(g=>g.user_id===selectedUser.id);
+const result=existing?await db.from('manual_access').update({plan,expires_at:expiry,note}).eq('user_id',selectedUser.id):await db.from('manual_access').insert({user_id:selectedUser.id,plan,expires_at:expiry,note,granted_by:user.id});
+btn.disabled=false;if(result.error){tell('Access change failed: '+result.error.message);return}closeGrant();await load()});
+$('cancel').onclick=closeGrant;$('dialog').addEventListener('click',e=>{if(e.target===$('dialog'))closeGrant()});
+$('reload').onclick=load;$('search').addEventListener('input',render);
+try{const response=await fetch('/api/public-config',{cache:'no-store'});if(!response.ok)throw Error('Site configuration unavailable');const cfg=await response.json();if(!cfg.authEnabled)throw Error('Supabase authentication not configured');
+db=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+const a=await db.auth.getUser();user=a.data.user;if(!user)throw Error('Please sign in to My Account first');
+const membership=await db.from('site_admins').select('user_id').eq('user_id',user.id).maybeSingle();
+if(membership.error||!membership.data)throw Error('Administrator access has not been granted to this account');
+adminVerified=true;$('workspace').classList.remove('hidden');await load();
+}catch(err){$('unauthorized').classList.remove('hidden');tell(err.message||'Unable to verify administrator');}
+</script></body></html>
