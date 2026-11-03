@@ -1,0 +1,9 @@
+# RIMVISUALS reference adaptation
+
+Reference: https://systemdlc.com/partnership and https://systemdlc.com, captured 2026-11-03 with Firecrawl branding and screenshots. The supplied route displays a partnership overlay over the landing page. Both captures were visually inspected. Desktop evidence only; responsive behavior below is our implementation choice.
+
+Observed: near-black background, low-contrast grid/rings, sparse floating HUD samples, centered serif hero, restrained grey body copy, white pill CTA, thin charcoal borders, rounded translucent panels. Partnership panel uses sidebar navigation and compact bordered inputs. Extracted fonts: Instrument Serif headings, Inter/Geist body, Geist Mono labels. Branding extraction reports black background, white text, #242424 borders and green highlights. Dimensions such as 96px hero/10px input radius are extracted estimates rather than fidelity guarantees.
+
+Implementation: existing static HTML/JS and Vercel functions; no hosting migration. RIMVISUALS identity, own screenshots, current account/device/admin flows retained. Black #060607, surfaces #101012/#151518, border #29292d, text #f4f4f5, secondary #a2a2aa. Inter body, Georgia/Instrument Serif hero, monospace technical labels. White primary buttons, violet preview accent (brand) and mint status marks. Desktop container 1180px, 16px card radii, fluid spacing, one-column mobile. Those values are proposed adaptations.
+
+Own interactive preview: local visual controls and draggable HUD samples, explicitly identified as a website preview. Actual game screenshots remain available in the existing lightbox. No System assets, testimonials, statistics, affiliate program or claims about game performance are copied. Reduced-motion preference disables decorative movement. Existing authentication JavaScript is preserved; account/admin receive visual CSS only.
