@@ -1,21 +1,17 @@
-# RIMVISUALS — original full-resolution gameplay screenshots
+# RIMVISUALS — real gameplay screenshots
 
-The repository page now references the following **9 original 1600×900 WebP screenshots**, which were provided by the user in ChatGPT. They are ready in the conversation artifact `rimvisuals-site-screenshots.zip`.
+Ten original 1920×1080 in-game screenshots supplied by the project owner. Each `.webp` is a **lossless** conversion of the original PNG
+(verified pixel-for-pixel identical), so quality is not reduced. No AI-generated images and no embedded base64 previews are used.
 
-The images have **not yet been committed as binary files to GitHub**, so this branch MUST NOT be merged until all nine files are uploaded under this directory. Do not regenerate compressed 230×130 SVG previews.
+| File | Used in |
+|---|---|
+| pvp-highlights.webp | PvP Highlights |
+| visual-hitbox.webp | Visual Hitbox |
+| clickgui-visuals.webp, clickgui-visuals-2.webp, clickgui-utilities.webp | ClickGUI |
+| clickgui-hud.webp | HUD Editor (Edit HUD button) |
+| keybind-manager.webp | Keybind Manager |
+| china-hat.webp | China Hat |
+| custom-fog.webp | Custom Fog |
+| hw-helper.webp | HW / FT Helpers, Events & Cooldowns |
 
-Required files (keep original .webp contents and names):
-
-- china-hat.webp
-- pvp-hitbox.webp
-- clickgui.webp
-- hw-helper.webp
-- custom-fog.webp
-- pvp-effects.webp
-- keybinds.webp
-- helper-settings.webp
-- hud.webp
-
-The ChatGPT asset ZIP already has exactly the correct folder structure: `assets/screenshots/*.webp`. Extract it, and upload all nine images using GitHub **Add file → Upload files** on this branch, in directory `assets/screenshots/`. Preserve filenames. Each image must return HTTP 200 at `https://rimvisuals.vercel.app/assets/screenshots/<name>.webp` after deployment, and images must load in the hero feature gallery and lightbox. 
-
-This PR edits only the static screenshot gallery and CSS; it does not change payment or authentication. Pricing remains informational. No paid access enabled.
+Some screenshots show other players' nicknames from a public server; replace them if any player objects.

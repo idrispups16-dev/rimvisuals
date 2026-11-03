@@ -1,10 +1,14 @@
 # RIMVISUALS website 1.0 — setup
 
-Site repository: idrispups16-dev/rimvisuals. This branch is a draft, **not production-ready**.
+Site repository: idrispups16-dev/rimvisuals. Billing and mod sales stay disabled; accounts need the Supabase connection below.
 
 ## Genuine gameplay screenshots
 
-The owner supplied nine real gameplay screenshots in ChatGPT. They were optimized as WebP in a separate ZIP attachment. Upload its `assets/screenshots/*.webp` files to this branch before merging. The site now references those files, and the former embedded AI concept gallery has been removed. Confirm each screenshot actually shows your client, and obtain permission from other players if identifiable names appear.
+Ten real 1920×1080 screenshots live in `assets/screenshots/*.webp` (lossless WebP, pixel-identical to the supplied PNGs). See `assets/screenshots/README.md`.
+
+## Accounts (My Account page)
+
+Registration and sign-in use Supabase Auth. Until `SUPABASE_URL` and `SUPABASE_ANON_KEY` exist in the Vercel project, `/api/public-config` reports `authEnabled:false` and the page says so; no accounts are faked. To enable: create a Supabase project, run `supabase/schema.sql` (profiles, subscriptions, sign-up trigger that stores the Minecraft nickname, row-level security), set the two variables (plus `SITE_URL`) in Vercel, add the site URL to Supabase Auth redirect URLs, redeploy.
 
 ## Auth & billing
 
@@ -20,4 +24,4 @@ Set Stripe webhook endpoint `/api/stripe-webhook`, with subscription created/upd
 
 ## Remaining work before sales
 
-IMPORTANT: The Minecraft Java EULA currently states that original Java mods may not be sold for money or monetized. Review https://www.minecraft.net/en-us/eula and https://www.minecraft.net/en-us/usage-guidelines, and obtain appropriate legal permission or choose a compliant business model BEFORE activating any payment checkout or selling access to the mod. The current pricing section is strictly non-transactional.\n\nPrices, currency, privacy policy, terms, refund and cancellation policy, email support, detailed invoices, subscription portal and server-side license verification integrated with Fabric client still need approval/implementation. Lifetime access terms are not set. Remove lifetime option if it will not be offered. No current frontend guarantees that a paid account is enforced by the Fabric mod. Never put Stripe secret keys or Supabase service keys in HTML. Images must be uploaded before merging this branch.
+IMPORTANT: The Minecraft Java EULA currently states that original Java mods may not be sold for money or monetized. Review https://www.minecraft.net/en-us/eula and https://www.minecraft.net/en-us/usage-guidelines, and obtain appropriate legal permission or choose a compliant business model BEFORE activating any payment checkout or selling access to the mod. The current pricing section is strictly non-transactional.\n\nPrices, currency, privacy policy, terms, refund and cancellation policy, email support, detailed invoices, subscription portal and server-side license verification integrated with Fabric client still need approval/implementation. Lifetime access terms are not set. Remove lifetime option if it will not be offered. No current frontend guarantees that a paid account is enforced by the Fabric mod. Never put Stripe secret keys or Supabase service keys in HTML.
