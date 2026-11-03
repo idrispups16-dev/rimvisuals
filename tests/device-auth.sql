@@ -10,6 +10,7 @@ begin
  c:=public.mod_device_start(encode(extensions.digest(a,'sha256'),'hex'),encode(extensions.digest(b,'sha256'),'hex'),'Test device');
  assert c->>'status'='pending','start failed';
  r:=public.mod_device_approve(c->>'code');assert r->>'status'='no_access','unlicensed approval allowed';
+ update auth.users set email_confirmed_at=now() where id=u;
  insert into public.manual_access(user_id,plan,expires_at,granted_by) values(u,'monthly',now()+interval '1 day',u);
  r:=public.mod_device_poll((c->>'challenge_id')::uuid,x);assert r->>'status'='invalid','wrong verifier accepted';
  r:=public.mod_device_poll((c->>'challenge_id')::uuid,a);assert r->>'status'='pending','pending claim enabled';
@@ -28,9 +29,9 @@ begin
  r:=public.mod_device_poll((d->>'challenge_id')::uuid,x);assert r->>'status'='approved','replacement failed';
  r:=public.mod_session_validate(b);assert r->>'status'='invalid','old session survived';
  r:=public.mod_session_validate(y);assert r->>'status'='active','new session invalid';
- update public.manual_access set expires_at=now()-interval '1 second' where user_id=u;
+ update auth.users set banned_until=now()+interval '1 day' where id=u;
  r:=public.mod_session_validate(y);assert r->>'status'='no_access','expired access accepted';
- update public.manual_access set expires_at=now()+interval '1 day' where user_id=u;
+ update auth.users set banned_until=null where id=u;
  select id into sid from public.mod_sessions where user_id=u;
  perform public.mod_session_revoke(sid);
  r:=public.mod_session_validate(y);assert r->>'status'='invalid','revoked session accepted';

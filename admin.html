@@ -26,7 +26,7 @@ section{margin-top:25px}.hidden{display:none!important}#notice{min-height:24px;c
 <header><a class="logo" href="index.html">✦ RIMVISUALS</a><nav class="nav"><a href="account.html">My Account</a><a href="index.html">Website</a></nav></header>
 <main><p class="muted">PRIVATE CONTROL CENTER</p><h1>Admin Panel</h1>
 <p id="notice" role="status">Checking administrator permission…</p>
-<div id="unauthorized" class="card hidden"><h2>Administrator access required</h2><p class="muted">Only explicitly authorized RIMVISUALS administrator accounts can view this page. Please sign in with your administrator account.</p><a href="account.html">Go to My Account</a></div>
+<div id="unauthorized" class="card hidden"><h2>Administrator access required</h2><p class="muted">Only explicitly authorized RIMVISUALS administrator accounts can view this page. Please sign in with your administrator account.</p><a href="account.html?next=admin">Войти в аккаунт администратора</a></div>
 <div id="workspace" class="hidden">
 <div class="grid"><div class="card"><div class="label">Registered profiles</div><div class="kpi" id="total">—</div></div>
 <div class="card"><div class="label">Active complimentary access</div><div class="kpi" id="active">—</div></div>
@@ -50,7 +50,7 @@ function date(v){return v?new Date(v).toLocaleDateString():'—';}
 function currentGrant(g){return Boolean(g&&(!g.expires_at||new Date(g.expires_at)>new Date()));}
 function statusFor(profile){const grant=grants.find(g=>g.user_id===profile.id);if(grant&&currentGrant(grant))return 'Complimentary · '+grant.plan+(grant.expires_at?' until '+date(grant.expires_at):'');
 const payment=subscriptions.find(s=>s.user_id===profile.id&&['active','trialing'].includes(s.status)&&(!s.current_period_end||new Date(s.current_period_end)>new Date()));
-return payment?'Subscription · '+payment.plan:'No active access';}
+return payment?'Subscription · '+payment.plan:'Визуалы доступны после входа';}
 function render(){const q=$('search').value.trim().toLowerCase();const list=profiles.filter(p=>(p.email||'').toLowerCase().includes(q)||(p.minecraft_nickname||'').toLowerCase().includes(q));
 $('members').replaceChildren();for(const p of list){const tr=document.createElement('tr');const email=row(p.email||'Email unavailable');email.classList.add('identity');tr.append(email,row(p.minecraft_nickname||'—'),row(date(p.created_at)),row(statusFor(p)));const actions=document.createElement('td');
 const edit=document.createElement('button');edit.className='btn secondary';edit.textContent='Set access';edit.onclick=()=>openGrant(p);actions.append(edit);
@@ -78,10 +78,11 @@ btn.disabled=false;if(result.error){tell('Access change failed: '+result.error.m
 $('cancel').onclick=closeGrant;$('dialog').addEventListener('click',e=>{if(e.target===$('dialog'))closeGrant()});
 $('reload').onclick=load;$('search').addEventListener('input',render);
 try{const response=await fetch('/api/public-config',{cache:'no-store'});if(!response.ok)throw Error('Site configuration unavailable');const cfg=await response.json();if(!cfg.authEnabled)throw Error('Supabase authentication not configured');
-db=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);
+db=createClient(cfg.supabaseUrl,cfg.supabaseAnonKey);const switchButton=document.createElement('button');switchButton.className='btn';switchButton.textContent='Сменить аккаунт';switchButton.onclick=async()=>{await db.auth.signOut();location.assign('/account.html?next=admin')};$('unauthorized').append(switchButton);
 const a=await db.auth.getUser();user=a.data.user;if(!user)throw Error('Please sign in to My Account first');
 const membership=await db.from('site_admins').select('user_id').eq('user_id',user.id).maybeSingle();
-if(membership.error||!membership.data)throw Error('Administrator access has not been granted to this account');
+if(membership.error||!membership.data)throw Error('Нет прав администратора у '+user.email+'. Войдите в аккаунт владельца.');
+db.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){adminVerified=false;$('workspace').classList.add('hidden');$('unauthorized').classList.remove('hidden');tell('Сеанс завершён. Войдите в аккаунт владельца снова.')}});
 adminVerified=true;$('workspace').classList.remove('hidden');await load();
 }catch(err){$('unauthorized').classList.remove('hidden');tell(err.message||'Unable to verify administrator');}
 </script></body></html>

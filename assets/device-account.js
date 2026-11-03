@@ -1,8 +1,8 @@
 export async function initializeDeviceAccount(db) {
 const $ = id => document.getElementById(id);
 const say = text => { $('deviceMessage').textContent = text; };
-const labels = { no_access: 'Доступ к моду пока не выдан. Обратитесь к владельцу RIMVISUALS.', expired: 'Код истёк или уже использован. Получите новый код в моде.', rate_limited: 'Слишком много попыток. Подождите минуту.', already_approved: 'Этот код уже подтверждён. Вернитесь в мод.' };
-let currentUser, code = '';
+const labels = { no_access: 'Подтвердите email и войдите в аккаунт. Для заблокированных аккаунтов вход в мод недоступен.', expired: 'Код истёк или уже использован. Получите новый код в моде.', rate_limited: 'Слишком много попыток. Подождите минуту.', already_approved: 'Этот код уже подтверждён. Вернитесь в мод.' };
+let currentUser, code = '', autoAttempted = false;
 const pending = new URL(location.href).searchParams.get('device');
 try { if (pending && /^[a-f0-9]{8}$/i.test(pending)) sessionStorage.setItem('rim-device-code', pending.toUpperCase()); } catch {}
 try { $('deviceCode').value = sessionStorage.getItem('rim-device-code') || ''; } catch {}
@@ -19,6 +19,13 @@ async function refresh() {
   $('deviceControls').classList.toggle('hidden', !user);
   $('modSessions').replaceChildren();
   if (!user || error) return;
+  let autoConnect = false;
+  try { autoConnect = sessionStorage.getItem('rim-connect-after-login') === 'yes'; } catch {}
+  if (autoConnect && !autoAttempted && /^[A-F0-9]{8}$/.test($('deviceCode').value.replace(/[-\s]/g,''))) {
+    autoAttempted = true;
+    try { sessionStorage.removeItem('rim-connect-after-login'); } catch {}
+    await $('lookupDevice').onclick();
+  }
   const result = await db.from('mod_sessions').select('id,device_name,created_at,last_seen,expires_at').eq('user_id', user.id).gt('expires_at', new Date().toISOString());
   if (result.error) throw new Error('Не удалось загрузить сеансы мода. Попробуйте обновить страницу.');
   if (!result.data.length) { $('modSessions').textContent = 'Нет подключённых устройств.'; return; }
@@ -51,7 +58,7 @@ $('lookupDevice').onclick = async () => {
     if (!result.has_access) throw new Error(labels.no_access);
     code = value;
     say(`Устройство: ${result.device_name}. Сравните код ${code.slice(0,4)}-${code.slice(4)} с кодом в вашем моде. ` + (result.replaces_session ? 'Подтверждение отключит предыдущий сеанс.' : 'Подтверждайте только свой запуск мода.'));
-    $('approveDevice').classList.remove('hidden');
+    await $('approveDevice').onclick();
   } catch (e) { say(e.message); } finally { button.disabled = false; }
 };
 $('approveDevice').onclick = async () => {
@@ -61,6 +68,7 @@ $('approveDevice').onclick = async () => {
     if (result.status !== 'approved') throw new Error(labels[result.status] || 'Не удалось подтвердить вход.');
     say('Вход подтверждён. Вернитесь в Minecraft — мод подключится автоматически.');
     code = ''; button.classList.add('hidden');
+    $('deviceCode').value = '';
     try { sessionStorage.removeItem('rim-device-code'); } catch {}
   } catch (e) { say(e.message); } finally { button.disabled = false; }
 };
