@@ -1,0 +1,43 @@
+-- Run as a transaction on the development/production database. All fixtures roll back.
+begin;
+do $$
+declare u uuid:=gen_random_uuid(); v uuid:=gen_random_uuid(); c jsonb; d jsonb; r jsonb; sid uuid;
+ a text:=repeat('a',64); b text:=repeat('b',64); x text:=repeat('c',64); y text:=repeat('d',64);
+begin
+ insert into auth.users(id,email,raw_user_meta_data) values(u,'device-test-'||u||'@example.invalid','{}'),(v,'device-test-'||v||'@example.invalid','{}');
+ perform set_config('request.jwt.claim.sub',u::text,true);
+ perform set_config('request.jwt.claims',jsonb_build_object('sub',u,'role','authenticated')::text,true);
+ c:=public.mod_device_start(encode(extensions.digest(a,'sha256'),'hex'),encode(extensions.digest(b,'sha256'),'hex'),'Test device');
+ assert c->>'status'='pending','start failed';
+ r:=public.mod_device_approve(c->>'code');assert r->>'status'='no_access','unlicensed approval allowed';
+ insert into public.manual_access(user_id,plan,expires_at,granted_by) values(u,'monthly',now()+interval '1 day',u);
+ r:=public.mod_device_poll((c->>'challenge_id')::uuid,x);assert r->>'status'='invalid','wrong verifier accepted';
+ r:=public.mod_device_poll((c->>'challenge_id')::uuid,a);assert r->>'status'='pending','pending claim enabled';
+ r:=public.mod_device_approve(c->>'code');assert r->>'status'='approved','approval failed';
+ update public.mod_challenges set last_poll=null where id=(c->>'challenge_id')::uuid;
+ r:=public.mod_device_poll((c->>'challenge_id')::uuid,a);assert r->>'status'='approved','claim failed';
+ r:=public.mod_device_poll((c->>'challenge_id')::uuid,a);assert r->>'status'='expired','claim replay accepted';
+ r:=public.mod_session_validate(b);assert r->>'status'='active','session not active';assert (r->>'lease_seconds')::int<=75,'excess lease';
+ select id into sid from public.mod_sessions where user_id=u;
+ perform set_config('request.jwt.claim.sub',v::text,true);
+ perform public.mod_session_revoke(sid);
+ r:=public.mod_session_validate(b);assert r->>'status'='active','other user revoked session';
+ perform set_config('request.jwt.claim.sub',u::text,true);
+ d:=public.mod_device_start(encode(extensions.digest(x,'sha256'),'hex'),encode(extensions.digest(y,'sha256'),'hex'),'Replacement');
+ r:=public.mod_device_approve(d->>'code');assert r->>'status'='approved','replacement approval failed';
+ r:=public.mod_device_poll((d->>'challenge_id')::uuid,x);assert r->>'status'='approved','replacement failed';
+ r:=public.mod_session_validate(b);assert r->>'status'='invalid','old session survived';
+ r:=public.mod_session_validate(y);assert r->>'status'='active','new session invalid';
+ update public.manual_access set expires_at=now()-interval '1 second' where user_id=u;
+ r:=public.mod_session_validate(y);assert r->>'status'='no_access','expired access accepted';
+ update public.manual_access set expires_at=now()+interval '1 day' where user_id=u;
+ select id into sid from public.mod_sessions where user_id=u;
+ perform public.mod_session_revoke(sid);
+ r:=public.mod_session_validate(y);assert r->>'status'='invalid','revoked session accepted';
+ update public.mod_challenges set expires_at=now()-interval '1 second' where id=(c->>'challenge_id')::uuid;
+ r:=public.mod_device_approve(c->>'code');assert r->>'status'='expired','expired code accepted';
+ assert not has_table_privilege('anon','public.mod_challenges','SELECT'),'anon can read challenges';
+ assert not has_column_privilege('authenticated','public.mod_sessions','token_hash','SELECT'),'user can read token hashes';
+ assert not has_function_privilege('anon','public.mod_device_approve(text)','EXECUTE'),'anonymous approval allowed';
+end $$;
+rollback;

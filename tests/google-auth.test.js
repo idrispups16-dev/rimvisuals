@@ -10,8 +10,9 @@ async function page(signInWithOAuth, suffix = '') {
     if (!elements.has(id)) elements.set(id, { textContent: '', value: '', disabled: false, classList: { toggle() {} }, addEventListener() {} });
     return elements.get(id);
   };
-  const script = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/import\{createClient\}from'[^']+';/, '');
+  const script = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/import\{[^}]+\}from'[^']+';/g, '');
   const context = vm.createContext({
+    initializeDeviceAccount: async () => {},
     document: { getElementById: get, querySelectorAll: () => [] },
     location: { origin: 'https://rimvisuals.example', search: suffix, hash: '', pathname: '/account.html', href: 'https://rimvisuals.example/account.html' + suffix },
     history: { replaceState() {} }, URL, URLSearchParams, setTimeout() {},
