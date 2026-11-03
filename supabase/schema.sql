@@ -10,3 +10,14 @@ create policy "users can create own profile" on public.profiles for insert with 
 create policy "users can update own profile" on public.profiles for update using(auth.uid()=id) with check(auth.uid()=id);
 create policy "users can read their subscriptions" on public.subscriptions for select using(auth.uid()=user_id);
 -- Only backend service-role writes subscriptions and webhook_events.
+
+-- Create the profile row automatically at sign-up, taking the optional nickname from the sign-up metadata.
+create or replace function public.handle_new_user() returns trigger language plpgsql security definer set search_path=public as $$
+declare nick text := nullif(new.raw_user_meta_data->>'minecraft_nickname','');
+begin
+  if nick is not null and nick !~ '^[A-Za-z0-9_]{3,16}$' then nick := null; end if;
+  insert into public.profiles(id,minecraft_nickname) values(new.id,nick) on conflict (id) do nothing;
+  return new;
+end $$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users for each row execute function public.handle_new_user();

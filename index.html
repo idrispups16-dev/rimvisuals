@@ -91,7 +91,20 @@ footer small{color:rgba(255,255,255,.4)}
 
 /* Membership launch */
 .plans{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:34px}.plan{padding:30px;border-radius:24px;display:flex;flex-direction:column;gap:18px}.plan h3{font-size:1.1rem}.plan p{color:var(--mut);line-height:1.7;flex:1}.plan strong{color:#dbb7ff;font-size:1.1rem}.plan .btn{justify-content:center}.smallprint{color:var(--mut);font-size:.78rem;line-height:1.7;margin-top:26px}@media(max-width:800px){.plans{grid-template-columns:1fr}}
-.screen-fallback{display:flex;align-items:center;justify-content:center;text-align:center;min-height:180px;padding:24px;border:1px solid rgba(168,85,247,.3);border-radius:16px;color:rgba(233,230,245,.8);background:linear-gradient(135deg,#211432,#090910)}
+/* Full-resolution gameplay gallery */
+#gl .shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:center}
+#features .hi img{aspect-ratio:16/9;object-fit:cover}
+#lb figure img{object-fit:contain;max-width:min(96vw,1600px);max-height:85vh}
+#gl .shot:focus-visible{outline:2px solid #a855f7;outline-offset:4px}
+/* Sectioned gallery */
+.gsec{margin-top:64px}.gsec h3{font-size:clamp(1.4rem,3.5vw,2rem)}.gsec>p{color:var(--mut);margin:8px 0 22px;line-height:1.7;max-width:70ch}
+.gimgs{display:grid;gap:22px;grid-template-columns:1fr}.gimgs.n3{grid-template-columns:repeat(3,1fr)}
+#gl .shot,#gl .shot:nth-child(5n+1){grid-column:auto}#gl .shot img{height:auto;aspect-ratio:16/9;object-fit:contain;background:#07070d}
+#gl .shot:hover img{transform:scale(1.03)}#gl .tag{font-size:.7rem}
+#gl .gimgs.n1{max-width:1100px}
+@media(max-width:860px){.gimgs.n3{grid-template-columns:1fr}}
+#lb figure{max-width:min(96vw,1700px)}#lb img{cursor:zoom-out}
+
 </style>
 </head>
 <body>
@@ -124,8 +137,8 @@ footer small{color:rgba(255,255,255,.4)}
 
 <section id="gallery" class="pad"><div class="wrap">
  <h2>Gallery</h2>
- <p class="lead">In-game screenshot for the RIMVISUALS look. Actual screenshots from RIMVISUALS Fabric 1.21.11, captured during testing.</p>
- <div class="gal" id="gl"></div>
+ <p class="lead">Ten real 1920 × 1080 screenshots captured in Minecraft with RIMVISUALS — original resolution, no AI-generated images. Click any image to enlarge it.</p>
+ <div id="gl"></div>
 </div></section>
 
 
@@ -175,18 +188,37 @@ var F=[
 ];
 document.getElementById("fg").innerHTML=F.map(function(f){return '<article class="card glass"><div class="ic">'+P(f[2])+'</div><h3>'+f[0]+'</h3><p>'+f[1]+'</p></article>'}).join("");
 
-// Placeholder images (generated SVG). Replace with real screenshots later.
-var H=[["#6d28d9","#1d2b8f"],["#a855f7","#0b1448"],["#4c1d95","#2563eb"],["#7c3aed","#111827"],["#9333ea","#1e3a8a"],["#5b21b6","#312e81"]];
-var S=[{"src":"assets/screenshots/pvp-hitbox.svg","alt":"Real RIMVISUALS PvP highlight with visual hitbox"},{"src":"assets/screenshots/clickgui.svg","alt":"Real RIMVISUALS ClickGUI interface in Minecraft"}];
-var HL=[["PvP Highlights","Visual hitboxes, target outlines and responsive PvP indicators.",0],["ClickGUI & Profiles","Modules, settings, keybinds and configurations in one interface.",1]];
-var hw=document.createElement("div");hw.innerHTML=HL.map(function(h){var m=S[h[2]];return '<div class="hl"><div class="hi glass"><img loading="lazy" src="'+m.src+'" alt="'+m.alt+'"><span class="tag glass">RIMVISUALS</span></div><div><h3>'+h[0]+'</h3><p>'+h[1]+'</p></div></div>'}).join("");
-hw.querySelectorAll(".hi img").forEach(function(im){im.addEventListener("error",function(){var p=im.closest(".hi");if(p)p.innerHTML='<div class="screen-fallback">Gameplay screenshot will appear here after upload</div>';});});
-document.querySelector("#features .wrap").appendChild(hw);
+// Real in-game screenshots, 1920x1080, lossless WebP (pixel-identical to the originals).
+var S=[
+{src:"assets/screenshots/pvp-highlights.webp",alt:"PvP on an anarchy server: Target HUD, armor panel and purple hitbox around the opponent",title:"PvP Highlights"},
+{src:"assets/screenshots/visual-hitbox.webp",alt:"Visual Hitbox and outline around an iron golem with Target HUD showing health and distance",title:"Visual Hitbox"},
+{src:"assets/screenshots/clickgui-visuals.webp",alt:"ClickGUI Visuals tab with module toggles",title:"ClickGUI · Visuals"},
+{src:"assets/screenshots/clickgui-visuals-2.webp",alt:"ClickGUI Visuals tab, trails, markers and fog modules",title:"ClickGUI · Visuals (page 2)"},
+{src:"assets/screenshots/clickgui-hud.webp",alt:"ClickGUI HUD tab with the Edit HUD button",title:"HUD Editor entry"},
+{src:"assets/screenshots/clickgui-utilities.webp",alt:"ClickGUI Utilities tab: Interface, Performance, Zoom, Sound Controller, Shulker Preview, Item Swap",title:"ClickGUI · Utilities"},
+{src:"assets/screenshots/keybind-manager.webp",alt:"Keybind Manager with an on-screen keyboard and a list of actions",title:"Keybind Manager"},
+{src:"assets/screenshots/china-hat.webp",alt:"Third-person view of a player wearing the China Hat cosmetic",title:"China Hat"},
+{src:"assets/screenshots/custom-fog.webp",alt:"Custom purple sky and fog with the RIMVISUALS HUD",title:"Custom Fog"},
+{src:"assets/screenshots/hw-helper.webp",alt:"HW Helper on HolyWorld: cooldown panel with a trap timer and a regions panel",title:"HW Helper"}
+];
+var SEC=[
+["PvP Highlights","Target HUD, armor panel and a hitbox outline during real PvP.",[0]],
+["Visual Hitbox","Client-side outline and hitbox around the target, with health and distance in Target HUD.",[1]],
+["ClickGUI","Visuals, HUD and Utilities in one searchable menu.",[2,3,5]],
+["HUD Editor","Open it from the menu (Edit HUD) or from the chat screen, then drag, resize and fade every panel.",[4]],
+["Keybind Manager","Assign every RIMVISUALS action to any key or mouse button.",[6]],
+["China Hat","Optional cosmetic visible in third person.",[7]],
+["Custom Fog","Your own sky and fog colour.",[8]],
+["HW / FT Helpers","HW Helper panels on HolyWorld, shown here from a development build.",[9]],
+["Events & Cooldowns","A cooldown timer fed by a server cooldown packet and a region panel that says so when no data was received.",[9]]
+];
 var gl=document.getElementById("gl");
-S.forEach(function(s,i){var b=document.createElement("button");b.className="shot glass";b.setAttribute("aria-label","Open image "+(i+1));b.innerHTML='<div><img loading="lazy" alt="'+s.alt+'" src="'+s.src+'"></div><span class="tag glass">RIMVISUALS</span>';b.addEventListener("click",function(){show(i)});b.querySelector("img").addEventListener("error",function(){b.remove();if(!gl.children.length){gl.innerHTML='<p class="lead">Screenshots are being uploaded to the gallery.</p>'}});gl.appendChild(b)});
+function img(i,lazy){var m=S[i];return '<button class="shot glass" data-i="'+i+'" aria-label="Open: '+m.title+'"><div><img '+(lazy?'loading="lazy" ':'')+'decoding="async" width="1920" height="1080" alt="'+m.alt+'" src="'+m.src+'"></div><span class="tag glass">'+m.title+'</span></button>'}
+gl.innerHTML=SEC.map(function(c,k){return '<section class="gsec" id="g'+k+'"><h3>'+c[0]+'</h3><p>'+c[1]+'</p><div class="gimgs n'+c[2].length+'">'+c[2].map(function(i){return img(i,k>0)}).join("")+'</div></section>'}).join("");
+gl.addEventListener("click",function(e){var b=e.target.closest(".shot");if(b)show(+b.dataset.i)});
 
 var lb=document.getElementById("lb"),li=document.getElementById("li"),lc=document.getElementById("lc"),cur=-1,last=null;
-function show(i){cur=(i+S.length)%S.length;li.src=S[cur].src;li.alt=S[cur].alt;lc.textContent=(cur+1)+" / "+S.length+" · In-game screenshot";if(!lb.classList.contains("open")){last=document.activeElement;lb.classList.add("open");document.body.style.overflow="hidden";document.getElementById("cl").focus()}}
+function show(i){cur=(i+S.length)%S.length;li.src=S[cur].src;li.alt=S[cur].alt;lc.textContent=S[cur].title+" · "+(cur+1)+" / "+S.length+" · real in-game screenshot, 1920×1080";if(!lb.classList.contains("open")){last=document.activeElement;lb.classList.add("open");document.body.style.overflow="hidden";document.getElementById("cl").focus()}}
 function hide(){lb.classList.remove("open");document.body.style.overflow="";cur=-1;if(last)last.focus()}
 document.getElementById("cl").onclick=hide;
 document.getElementById("prev").onclick=function(){show(cur-1)};
