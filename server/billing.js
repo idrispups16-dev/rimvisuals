@@ -16,3 +16,9 @@ export async function telegram(method,body){
 }
 export async function signedDownload(uid){if(!await db('rpc/paid_download_access',{p_user:uid}))throw Error('No paid access');const object=process.env.MOD_STORAGE_OBJECT;if(!object||object.includes('..'))throw Error('Release unavailable');const path='/storage/v1/object/sign/mod-releases/'+object.split('/').map(encodeURIComponent).join('/');const r=await fetch(process.env.SUPABASE_URL+path,{method:'POST',headers:{apikey:process.env.SUPABASE_SERVICE_ROLE_KEY,Authorization:'Bearer '+process.env.SUPABASE_SERVICE_ROLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({expiresIn:120}),signal:AbortSignal.timeout(7000)});if(!r.ok)throw Error('Release unavailable');const {signedURL}=await r.json();if(typeof signedURL!=='string'||!signedURL.startsWith('/object/sign/mod-releases/'))throw Error('Invalid storage response');return process.env.SUPABASE_URL+'/storage/v1'+signedURL;}
 export function headers(res){res.setHeader('Cache-Control','no-store');res.setHeader('X-Content-Type-Options','nosniff');}
+
+export async function isAdmin(req,u){
+ if(!process.env.SUPABASE_ANON_KEY)return false;
+ const r=await fetch(process.env.SUPABASE_URL+'/rest/v1/site_admins?user_id=eq.'+encodeURIComponent(u.id)+'&select=user_id',{headers:{apikey:process.env.SUPABASE_ANON_KEY,Authorization:req.headers.authorization},signal:AbortSignal.timeout(7000)});
+ if(!r.ok)return false;const rows=await r.json();return Array.isArray(rows)&&rows.some(row=>row.user_id===u.id);
+}
