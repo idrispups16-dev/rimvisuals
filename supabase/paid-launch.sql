@@ -1,4 +1,10 @@
--- Apply ONLY at paid launch, after Stars/key fulfillment and private downloads are verified.
+-- Paid launch: preserve existing administrator access without granting it to buyers.
+insert into public.manual_access(user_id,plan,expires_at,note,granted_by)
+select user_id,'lifetime',null,'Existing administrator access preserved at paid launch',user_id
+from public.site_admins
+on conflict(user_id) do nothing;
+
+-- No subscription/manual grant means no access, including confirmed email accounts.
 create or replace function public.mod_access_until(p_user uuid) returns timestamptz
 language sql stable security definer set search_path='' as $$
  select max(until_at) from (
