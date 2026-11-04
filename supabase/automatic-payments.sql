@@ -79,3 +79,5 @@ grant execute on function public.create_purchase_order(uuid,text,text,bigint,tex
 -- Private binary storage. No public download policies.
 insert into storage.buckets(id,name,public) values('mod-releases','mod-releases',false) on conflict(id) do nothing;
 
+
+alter table public.purchase_orders add column if not exists processing_error text;

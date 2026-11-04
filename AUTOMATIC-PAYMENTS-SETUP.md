@@ -25,3 +25,10 @@ After all readiness checks: apply paid-launch.sql (restores mod-access gating; p
 The bot token has been saved as a Production secret. The user explicitly authorized moving the existing service_role key to the same project’s Vercel Production secret. Both remain out of Git. Never include values in support notes or test logs.
 
 The staged purchase controls are visible only to verified site administrators. Server authorization independently blocks non-admin order creation while PUBLIC_AUTO_PAYMENTS_ENABLED is unset.
+
+## Current controlled setup
+PR #5 is merged and deployed. Owner explicitly approved publication and payment setup. AUTO_BILLING_ENABLED is enabled only for owner testing with PUBLIC_AUTO_PAYMENTS_ENABLED=false; the server independently checks site_admins using the signed-in user JWT and the existing own-row RLS policy. No service_role SELECT grant on site_admins was added (approval review rejected that grant; the narrower existing user-access path solved the problem).
+
+The bot identity and webhook setup succeeded. A real 80-Star invoice was created and arrived. Real payment/activation is still unverified. The owner-only delivery probe sends the private JAR to the Telegram account bound to the owner's own order, without changing order/payment/subscription state. Ordinary users and other users' orders cannot use it. The document is uploaded as multipart/form-data, since Telegram's sendDocument-by-URL only guarantees PDF/ZIP support. 32 Node tests pass.
+
+The uploaded object remains private. Public download URL verification returned blocked. Automatic FunPay and TON fulfillment still require their provider integrations and remain manual. Do not enable PUBLIC_AUTO_PAYMENTS_ENABLED or apply paid-launch.sql before completing the real payment, expiry/refund, and entitlement checks.
