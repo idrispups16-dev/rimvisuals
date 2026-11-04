@@ -1,4 +1,5 @@
 export function initializePurchaseAccount(sb){
+ const requested=new URLSearchParams(location.search).get('plan');if(['monthly','quarterly','lifetime'].includes(requested))document.getElementById('purchasePlan').value=requested;
  const $=id=>document.getElementById(id),message=text=>$('purchaseStatus').textContent=text;
  async function call(path,body){const {data:{session}}=await sb.auth.getSession();if(!session)throw Error('Сначала войдите в аккаунт.');const r=await fetch(path,{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.access_token},body:JSON.stringify(body||{})});let value={};try{value=await r.json();}catch{}if(!r.ok)throw Error(value.error||'Операция пока недоступна.');return value;}
  async function run(button,action){button.disabled=true;message('Проверяем…');try{await action();}catch(e){message(e.message);}finally{button.disabled=false;}}
