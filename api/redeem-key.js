@@ -1,0 +1,3 @@
+import crypto from 'node:crypto';
+import {ready,user,db,headers} from '../server/billing.js';
+export default async function handler(req,res){headers(res);if(req.method!=='POST')return res.status(405).end();if(!ready())return res.status(503).end();try{const u=await user(req);if(!u)return res.status(401).end();const code=String(req.body?.code||'').trim().toUpperCase();if(!/^RV-[A-F0-9]{48}$/.test(code))return res.status(400).json({error:'Invalid activation key.'});const result=await db('rpc/redeem_purchase_key',{p_user:u.id,p_hash:crypto.createHash('sha256').update(code).digest('hex')});return res.status(result.status==='active'?200:400).json(result);}catch{return res.status(503).json({error:'Could not activate the key. Please retry.'});}}

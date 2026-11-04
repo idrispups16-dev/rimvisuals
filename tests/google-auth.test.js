@@ -13,6 +13,7 @@ async function page(signInWithOAuth, suffix = '') {
   const script = html.match(/<script type="module">([\s\S]*?)<\/script>/)[1].replace(/import\{[^}]+\}from'[^']+';/g, '');
   const context = vm.createContext({
     initializeDeviceAccount: async () => {},
+    initializePurchaseAccount: () => {},
     document: { getElementById: get, querySelectorAll: () => [] },
     location: { origin: 'https://rimvisuals.example', search: suffix, hash: '', pathname: '/account.html', href: 'https://rimvisuals.example/account.html' + suffix },
     history: { replaceState() {} }, URL, URLSearchParams, setTimeout() {},
@@ -59,3 +60,4 @@ test('OAuth callback cancellation is shown as text', async () => {
   const get = await page(async () => ({}), '?error=access_denied&error_description=Access+was+denied');
   assert.match(get('message').textContent, /Access was denied/);
 });
+
