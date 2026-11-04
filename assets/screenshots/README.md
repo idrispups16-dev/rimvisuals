@@ -1,17 +1,3 @@
-# RIMVISUALS — real gameplay screenshots
+# Актуальные скриншоты
 
-Ten original 1920×1080 in-game screenshots supplied by the project owner. Each `.webp` is a **lossless** conversion of the original PNG
-(verified pixel-for-pixel identical), so quality is not reduced. No AI-generated images and no embedded base64 previews are used.
-
-| File | Used in |
-|---|---|
-| pvp-highlights.webp | PvP Highlights |
-| visual-hitbox.webp | Visual Hitbox |
-| clickgui-visuals.webp, clickgui-visuals-2.webp, clickgui-utilities.webp | ClickGUI |
-| clickgui-hud.webp | HUD Editor (Edit HUD button) |
-| keybind-manager.webp | Keybind Manager |
-| china-hat.webp | China Hat |
-| custom-fog.webp | Custom Fog |
-| hw-helper.webp | HW / FT Helpers, Events & Cooldowns |
-
-Some screenshots show other players' nicknames from a public server; replace them if any player objects.
+Все latest-*.webp сняты 4 ноября 2026 года в Minecraft 1.21.11 с установленным rimvisuals-0.4.10-hw.1.jar. Исходные F2 PNG: 1920×1009. WebP сохранены с качеством 93, без изменения содержимого. HUD Editor показывает демонстрационные данные редактора.

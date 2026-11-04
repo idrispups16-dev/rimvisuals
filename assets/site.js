@@ -61,7 +61,7 @@
   new ResizeObserver(() => widgets.forEach(widget => { if (!widget.hidden) constrain(widget, widget.offsetLeft, widget.offsetTop); })).observe(stage);
 
   const groups = [...document.querySelectorAll('#gl .gsec')];
-  const labels = ['PvP', 'Visual Hitbox', 'ClickGUI', 'HUD Editor', 'Бинды', 'China Hat', 'Туман и небо', 'HW / FT', 'Таймеры'];
+  const labels = ['Новое меню', 'Редактор HUD', 'Небо и туман', 'China Hat', 'Предметы'];
   const galleryButtons = groups.map((group, i) => {
     const button = document.createElement('button'); button.type = 'button'; button.textContent = labels[i]; button.setAttribute('role', 'tab'); button.setAttribute('aria-controls', group.id);
     group.setAttribute('role', 'tabpanel'); button.id = 'gallery-tab-' + i; group.setAttribute('aria-labelledby', button.id);
