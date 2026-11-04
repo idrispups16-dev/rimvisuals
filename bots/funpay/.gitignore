@@ -1,0 +1,6 @@
+data/
+*.sqlite3*
+*.txt
+!requirements.txt
+.env
+__pycache__/

@@ -13,10 +13,8 @@ export function initializePayments(doc=document,search=location.search){
   doc.getElementById('starsPrice').textContent=p.stars+' Stars';
   doc.getElementById('tonPrice').textContent=p.ton+' TON';
   doc.getElementById('funpayPrice').textContent=p.rub+' ₽ + комиссия FunPay';
-  doc.getElementById('tonPay').href=tonLink(key);
   doc.getElementById('funpayPay').href='https://funpay.com/lots/offer?id='+p.offer;
   doc.getElementById('starsContact').href='/account.html?plan='+key+'#purchases';
   for(const method of ['crypto'])doc.getElementById(method+'Contact').href=CONTACT+'?text='+encodeURIComponent('Здравствуйте! Хочу RIMVISUALS: '+p.name+'. Оплата '+(method==='stars'?p.stars+' Stars':p.ton+' TON')+'. Подскажите порядок оплаты и активации.');
  };select.addEventListener('change',render);render();
- doc.getElementById('copyWallet').addEventListener('click',async()=>{const status=doc.getElementById('copyStatus');try{await navigator.clipboard.writeText(WALLET);status.textContent='Адрес скопирован.';}catch{status.textContent='Не удалось скопировать. Выделите адрес кошелька и скопируйте вручную.';}});
 }
