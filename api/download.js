@@ -1,0 +1,2 @@
+import {ready,user,signedDownload,headers} from '../server/billing.js';
+export default async function handler(req,res){headers(res);if(req.method!=='POST')return res.status(405).end();if(!ready())return res.status(503).end();try{const u=await user(req);if(!u)return res.status(401).end();return res.status(200).json({url:await signedDownload(u.id)});}catch{return res.status(403).json({error:'An active paid license and an available release are required.'});}}
