@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="RIMVISUALS CFG Studio — интерактивный предпросмотр игровых визуалов и HUD, сохранение локального черновика настроек.">
+<title>CFG Studio — RIMVISUALS</title><meta name="theme-color" content="#08080e"><link rel="icon" href="/assets/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="/assets/hybrid.css">
+<style>
+.cfg-grid{display:grid;grid-template-columns:minmax(270px,360px) 1fr;gap:18px;align-items:start}
+.cfg-preview{position:relative;isolation:isolate;border:1px solid #8c6ba163;border-radius:18px;overflow:hidden;aspect-ratio:16/9;background:#100d19}
+.cfg-preview>img{display:block;width:100%;height:100%;object-fit:cover}.cfg-fog{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(165,116,244,.55),transparent 70%);transition:opacity .15s}
+.cfg-hud{position:absolute;top:7%;left:5%;background:#100a1fc9;border:1px solid #ad72e9a8;border-left:4px solid var(--hud-accent,#ad72e9);border-radius:9px;padding:7px 10px;font:11px/1.4 ui-monospace,Consolas,monospace;color:white;min-width:120px;box-shadow:0 10px 28px #0009;cursor:grab;touch-action:none;user-select:none}
+.cfg-hud[hidden],.cfg-hint[hidden]{display:none}.cfg-hud.dragging{cursor:grabbing}
+.cfg-hint{position:absolute;right:10px;bottom:10px;font-size:10px;color:#fff;background:#090712bc;padding:5px 8px;border-radius:6px}
+.cfg-box{border:1px solid #644a8060;background:#15101f;border-radius:17px;padding:19px;margin-bottom:14px}
+.cfg-box h3{margin:0 0 16px;font-size:18px}.cfg-group{margin-bottom:16px}.cfg-group>label{display:block;font-size:13px;color:#cab8da;margin-bottom:7px}
+.cfg-group input[type=range]{width:100%;accent-color:#b18aff}.cfg-group input[type=color]{width:100%;min-height:38px;background:#130e1a;border:1px solid #725991;border-radius:8px;cursor:pointer}
+.cfg-pill{font:11px ui-monospace,monospace;padding:4px 8px;background:#56367b6e;border:1px solid #7856a6;border-radius:20px}
+.cfg-switch{display:flex;gap:10px;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff10;padding:12px 0;font-size:13px}.cfg-switch input{width:18px;height:18px;accent-color:#ac79ff}
+.cfg-action-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.cfg-action-row .hy-btn{font-size:12px}
+.cfg-status{font-size:13px;color:#dbc4ff;min-height:21px}.cfg-legend{padding:15px;background:#0c0914;border:1px solid #6b5385;border-radius:14px;color:#bcb0cb;font-size:12px}
+@media(max-width:950px){.cfg-grid{grid-template-columns:1fr}}
+</style></head>
+<body class="hy-body">
+<header class="hy-header"><nav class="hy-container hy-navbar" aria-label="Главная навигация">
+<a href="/" class="hy-brand"><span class="hy-mark">RV</span> RIMVISUALS</a><div class="hy-links"><a href="/">Главная</a><a href="experience.html">Экосистема</a><a href="/#gallery">Скриншоты</a><a href="/payment.html">Тарифы</a></div><a href="/account.html" class="hy-btn ghost">Мой аккаунт ↗</a></nav></header>
+<main><section class="hy-section" style="padding-top:65px"><div class="hy-container">
+<span class="hy-tag">WEB CONFIGS · LOCAL PREVIEW</span><h1 style="font-size:clamp(35px,5vw,58px);line-height:1.14;letter-spacing:-.06em;margin:20px 0 12px">Настрой Minecraft<br><span class="hy-accent">под себя.</span></h1>
+<p class="hy-copy">Тестовый конструктор оформления: переключай модули, меняй цвета и редактируй HUD. Это браузерный предпросмотр, который не изменяет настройки установленного RIMVISUALS.</p>
+<div class="cfg-grid" style="margin:36px 0">
+<aside class="cfg-box"><h3>◇ Visuals & HUD</h3>
+<div class="cfg-switch"><label for="cfgFog">Custom Fog</label><input id="cfgFog" type="checkbox" checked></div>
+<div class="cfg-switch"><label for="cfgHud">Watermark HUD</label><input id="cfgHud" type="checkbox" checked></div>
+<div class="cfg-switch"><label for="cfgParticles">Hit Particles</label><input id="cfgParticles" type="checkbox" checked></div>
+<div class="cfg-switch"><label for="cfgTrails">Sword Trails</label><input id="cfgTrails" type="checkbox"></div>
+<div class="cfg-group" style="margin-top:18px"><label for="cfgFogValue">Сила визуального тумана <output id="cfgFogText">55%</output></label><input type="range" min="0" max="100" value="55" id="cfgFogValue"></div>
+<div class="cfg-group"><label for="cfgColor">Цвет интерфейса</label><input type="color" value="#a578ff" id="cfgColor"></div>
+<div class="cfg-group"><label for="cfgScale">Размер HUD <output id="cfgScaleText">100%</output></label><input type="range" min="60" max="150" value="100" id="cfgScale"></div>
+<div class="cfg-group"><label for="cfgPreset">Пресет</label><select class="hy-select" id="cfgPreset"><option value="custom">Custom</option><option value="performance">Performance</option><option value="balanced">Balanced</option><option value="ultra">Ultra</option></select></div>
+</aside>
+<div><div class="hy-window"><div class="hy-titlebar"><span>✦ RIMVISUALS · PREVIEW</span><span class="cfg-pill">BROWSER ONLY</span></div>
+<div class="hy-window-body"><div class="cfg-preview" id="stage">
+<img src="/assets/screenshots/latest-world-clean.webp" alt="Сцена из RIMVISUALS для предпросмотра оформления" width="1920" height="1009">
+<div class="cfg-fog" id="fogLayer"></div>
+<div id="widget" class="cfg-hud" tabindex="0" role="group" aria-label="Перемещаемая панель HUD. Используй стрелки клавиатуры или мышь, чтобы изменить положение">✦ RIMVISUALS <span id="hudColorLabel">VIOLET</span><div>FPS 144 · Preview</div><div>XYZ 100 / 70 / 42</div></div>
+<span id="hint" class="cfg-hint">ПЕРЕТАСКИВАЙ HUD ↔</span>
+</div><div class="hy-meta"><span>Visuals</span><span>HUD</span><span>Local Draft</span><span>Not synced</span></div>
+</div></div><div class="cfg-legend" style="margin-top:15px">Эффекты на этой странице — визуальная симуляция. FPS 144 — пример оформления HUD, не измерение производительности. Экспортированный JSON не является готовым CFG мода и не загружается в Minecraft автоматически.</div>
+<div class="cfg-action-row"><button id="save" class="hy-btn" type="button">Сохранить черновик</button><button id="export" class="hy-btn ghost" type="button">Экспорт JSON</button><button id="reset" class="hy-btn ghost" type="button">Сбросить</button></div>
+<p id="status" class="cfg-status" role="status" aria-live="polite"></p>
+</div></div></div>
+</section><section class="hy-section"><div class="hy-container"><span class="hy-overline">COMING LATER</span><h2>Твой CFG.<br><span class="hy-accent">В одном клике.</span></h2><p class="hy-copy">Когда будет готова интеграция с Fabric-модом и системой профилей, можно будет переносить конфигурации между браузером и игрой. Сейчас черновики хранятся только на этом устройстве в браузере.</p>
+<a href="experience.html" class="hy-btn ghost">Смотреть экосистему ↗</a></div></section></main>
+<footer class="hy-footer"><div class="hy-container"><span>© 2026 RIMVISUALS</span><span>Browser preview · Not affiliated with Mojang / Microsoft · <a href="/">На главную</a></span></div></footer>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const ids=['cfgFog','cfgHud','cfgParticles','cfgTrails','cfgFogValue','cfgColor','cfgScale','cfgPreset'];
+const defaults={cfgFog:true,cfgHud:true,cfgParticles:true,cfgTrails:false,cfgFogValue:'55',cfgColor:'#a578ff',cfgScale:'100',cfgPreset:'custom',x:5,y:7};
+let x=5,y=7,drag=null;
+function current(){const s={schema:'rimvisuals.web-preview.v1',source:'browser-only',x,y};ids.forEach(k=>s[k]=$(k).type==='checkbox'?$(k).checked:$(k).value);return s}
+function apply(v){ids.forEach(k=>{const el=$(k),val=v[k]??defaults[k];if(el.type==='checkbox')el.checked=Boolean(val);else el.value=String(val)});x=Number.isFinite(+v.x)?Math.min(88,Math.max(0,+v.x)):5;y=Number.isFinite(+v.y)?Math.min(83,Math.max(0,+v.y)):7;update()}
+function update(){
+$('fogLayer').style.opacity=$('cfgFog').checked?Number($('cfgFogValue').value)/100:0;
+$('widget').hidden=!$('cfgHud').checked;$('hint').hidden=!$('cfgHud').checked;
+$('widget').style.setProperty('--hud-accent',$('cfgColor').value);
+$('widget').style.transform='scale('+Number($('cfgScale').value)/100+')';$('widget').style.transformOrigin='top left';
+$('widget').style.left=x+'%';$('widget').style.top=y+'%';
+$('cfgFogText').textContent=$('cfgFogValue').value+'%';$('cfgScaleText').textContent=$('cfgScale').value+'%';
+$('hudColorLabel').textContent=$('cfgColor').value.toUpperCase();
+}
+const presets={performance:{cfgFogValue:0,cfgParticles:false,cfgTrails:false,cfgScale:90},
+balanced:{cfgFogValue:45,cfgParticles:true,cfgTrails:false,cfgScale:100},
+ultra:{cfgFogValue:85,cfgParticles:true,cfgTrails:true,cfgScale:112}};
+ids.forEach(k=>$(k).addEventListener('input',()=>{if(k==='cfgPreset'&&presets[$(k).value]){const v=presets[$(k).value];for(const [key,val]of Object.entries(v)){const e=$(key);e.type==='checkbox'?e.checked=val:e.value=val}}else if(k!=='cfgPreset')$('cfgPreset').value='custom';update()}));
+try{const saved=JSON.parse(localStorage.getItem('rimvisuals.web-preview.v1')||'null');if(saved&&saved.schema==='rimvisuals.web-preview.v1')apply(saved);else apply(defaults)}catch{apply(defaults)}
+$('save').onclick=()=>{try{localStorage.setItem('rimvisuals.web-preview.v1',JSON.stringify(current()));$('status').textContent='Черновик сохранён только в этом браузере.'}catch{$('status').textContent='Браузер запретил локальное сохранение.'}};
+$('reset').onclick=()=>{apply(defaults);try{localStorage.removeItem('rimvisuals.web-preview.v1')}catch{}$('status').textContent='Настройки предпросмотра сброшены.'};
+$('export').onclick=()=>{
+const text=JSON.stringify(current(),null,2),blob=new Blob([text],{type:'application/json'}),url=URL.createObjectURL(blob);
+const a=document.createElement('a');a.href=url;a.download='RIMVISUALS-web-preview.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+$('status').textContent='JSON-черновик экспортирован. Это не игровой CFG.';};
+$('widget').addEventListener('pointerdown',e=>{if(e.button!==0)return;const box=$('stage').getBoundingClientRect();drag={id:e.pointerId,box,startX:e.clientX,startY:e.clientY,x,y};$('widget').setPointerCapture(e.pointerId);$('widget').classList.add('dragging')});
+$('widget').addEventListener('pointermove',e=>{if(!drag||drag.id!==e.pointerId)return;const box=drag.box;x=Math.min(88,Math.max(0,drag.x+(e.clientX-drag.startX)/box.width*100));y=Math.min(83,Math.max(0,drag.y+(e.clientY-drag.startY)/box.height*100));update()});
+function stop(){drag=null;$('widget').classList.remove('dragging')}
+$('widget').addEventListener('pointerup',stop);$('widget').addEventListener('pointercancel',stop);
+$('widget').addEventListener('keydown',e=>{const step=e.shiftKey?5:1;if(e.key==='ArrowLeft')x-=step;else if(e.key==='ArrowRight')x+=step;else if(e.key==='ArrowUp')y-=step;else if(e.key==='ArrowDown')y+=step;else return;e.preventDefault();x=Math.min(88,Math.max(0,x));y=Math.min(83,Math.max(0,y));update()});
+})();
+</script>
+</body></html>
