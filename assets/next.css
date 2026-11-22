@@ -67,3 +67,22 @@ body{background:#08070c;color:var(--rv-text)}
   .nav-links.open{display:flex}
 }
 @media(max-width:700px){.nav-links{background:#12101a;border-color:#8967ac64}}
+
+/* Hybrid product showcase */
+.rv-mini-loader{max-width:450px;background:#0c0913;border:1px solid #956bbd7b;border-radius:15px;padding:14px 18px;margin:23px 0;color:#ddcef2;box-shadow:0 15px 50px #0008}
+.rv-mini-loader>div{display:flex;align-items:center;justify-content:space-between;gap:12px;border-bottom:1px solid #8a6da42e;padding:10px 0;font-size:12px}
+.rv-mini-loader>div:first-child{padding-bottom:15px;color:#d5baff}
+.rv-mini-loader>div:last-child{border-bottom:0}
+.rv-mini-loader span,.rv-mini-loader small{color:#a79bb7;font-size:10px;letter-spacing:.08em}
+.rv-mini-loader b{color:#b995ed;font-weight:600}
+.rv-hybrid-footer{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:25px 30px;border-radius:21px;border:1px solid #a784d45d;background:linear-gradient(115deg,#2b1b37,#100c19);margin-top:18px}
+.rv-hybrid-footer strong{color:#bda4e3;font-size:11px;letter-spacing:.16em}
+.rv-hybrid-footer p{color:#bbb0ce;font-size:14px;margin:7px 0}
+@media(max-width:780px){.rv-hybrid-footer{flex-direction:column;align-items:flex-start;padding:22px}}
+/* Tablet-size navigation when there are multiple product links */
+@media (max-width:1280px) and (min-width:701px) {
+  #burger{display:block}
+  .nav-account{margin-left:auto}
+  .nav-links{display:none;position:absolute;left:22px;right:22px;top:76px;z-index:31;padding:22px;background:#12101a;border:1px solid #8967ac64;border-radius:14px;box-shadow:0 20px 55px #000b;flex-direction:column;gap:17px}
+  .nav-links.open{display:flex}
+}
