@@ -57,3 +57,13 @@ body{background:#08070c;color:var(--rv-text)}
 @media(max-width:1050px){.rv-bento-card,.rv-bento-card.wide,.rv-bento-card.featured{grid-column:span 6}}
 @media(max-width:780px){.rv-bento-card,.rv-bento-card.wide,.rv-bento-card.featured{grid-column:span 12;min-height:205px}.rv-jarvis{grid-template-columns:1fr;padding:26px;min-height:auto}.rv-voice{min-height:280px}.rv-steps{grid-template-columns:1fr}.rv-contact{padding:20px}.rv-hero-caption span{font-size:10px}.rv-orb{width:205px;height:205px}}
 @media(prefers-reduced-motion:reduce){.rv-orb::before,.rv-orb::after{animation:none}.rv-bento-card{transition:none}}
+
+/* More navigation sections require an earlier responsive collapse. */
+@media (max-width:1220px) and (min-width:951px){.topbar>.row{gap:14px}.nav-links{gap:12px;font-size:11px}.nav-account>a:not(.pill){display:none}}
+@media (max-width:950px) and (min-width:701px){
+  #burger{display:block}
+  .nav-account{margin-left:auto}
+  .nav-links{display:none;position:absolute;left:22px;right:22px;top:76px;z-index:31;padding:22px;background:#12101a;border:1px solid #8967ac64;border-radius:14px;box-shadow:0 20px 55px #000b;flex-direction:column;gap:17px}
+  .nav-links.open{display:flex}
+}
+@media(max-width:700px){.nav-links{background:#12101a;border-color:#8967ac64}}
