@@ -22,7 +22,7 @@ test('three product states are represented without claiming a live inject or Jar
   assert.match(exp,/Not connected/);
   assert.match(exp,/In development/);
   assert.match(lab,/Это браузерный предпросмотр/);
-  assert.match(lab,/not a game/i);
+  assert.match(lab,/не изменяет настройки установленного RIMVISUALS/);
 });
 test('config lab exports non-game JSON and stores drafts in browser only',()=>{
   assert.match(lab,/rimvisuals\.web-preview\.v1/);
