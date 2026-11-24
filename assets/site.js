@@ -60,23 +60,7 @@
   $('panelOpacity').oninput = e => { widgets.forEach(widget => { widget.style.backgroundColor = `rgba(17,16,21,${Number(e.target.value) / 100})`; }); };
   new ResizeObserver(() => widgets.forEach(widget => { if (!widget.hidden) constrain(widget, widget.offsetLeft, widget.offsetTop); })).observe(stage);
 
-  const groups = [...document.querySelectorAll('#gl .gsec')];
-  const labels = ['Новое меню', 'Редактор HUD', 'Небо и туман', 'China Hat', 'Предметы'];
-  const galleryButtons = groups.map((group, i) => {
-    const button = document.createElement('button'); button.type = 'button'; button.textContent = labels[i]; button.setAttribute('role', 'tab'); button.setAttribute('aria-controls', group.id);
-    group.setAttribute('role', 'tabpanel'); button.id = 'gallery-tab-' + i; group.setAttribute('aria-labelledby', button.id);
-    button.onclick = () => {
-      groups.forEach((item, j) => { item.hidden = i !== j; galleryButtons[j].setAttribute('aria-selected', String(i === j)); galleryButtons[j].tabIndex = i === j ? 0 : -1; });
-    };
-    button.onkeydown = e => {
-      if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
-      e.preventDefault();
-      const target = e.key === 'Home' ? 0 : e.key === 'End' ? groups.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + groups.length) % groups.length;
-      galleryButtons[target].click(); galleryButtons[target].focus();
-    };
-    $('galleryTabs').append(button); return button;
-  });
-  galleryButtons[0]?.click();
+
   const reveal = new IntersectionObserver(entries => entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('visible'); reveal.unobserve(entry.target); } }), { threshold: 0.12 });
   document.querySelectorAll('.reveal').forEach(element => reveal.observe(element));
 })();
