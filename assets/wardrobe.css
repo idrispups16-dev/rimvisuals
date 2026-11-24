@@ -1,0 +1,5 @@
+.wardrobe img {display:block;max-width:100%;height:auto;border-radius:12px}
+.wardrobe select,.wardrobe #slots button {background:#241c30;color:#fff;border:1px solid #766583;border-radius:9px;padding:.65rem;font:inherit}
+.wardrobe #slots {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.4rem;max-width:30rem}
+.wardrobe button[aria-pressed=true] {outline:2px solid #bd9df5}
+.wardrobe [hidden] {display:none}

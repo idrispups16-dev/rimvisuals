@@ -1,0 +1,8 @@
+#clickDemo { margin:auto; width:min(25rem,90vw); padding:1.5rem; border:1px solid #71638b; border-radius:1rem; color:#f6f2ff; background:#191621; box-shadow:0 1rem 5rem #0008; }
+#clickDemo::backdrop { background:#08071099; }
+#clickDemo h3,#clickDemo p { margin:0 0 1rem; }
+#clickDemo input[type=search] { width:100%; padding:.75rem; color:inherit; background:#24202f; border:1px solid #786c88; border-radius:.5rem; }
+#clickDemo label { display:flex; gap:.75rem; align-items:center; padding:.9rem 0; cursor:pointer; }
+#clickDemo label[hidden] { display:none; }
+#clickDemo input { accent-color:#bca5f6; }
+#openClickDemo { margin:.75rem 0; }
